@@ -1,4 +1,5 @@
 import json 
+from tabulate import tabulate
 import time as t
 
 FILE_PATH = 'contacts_book.json'
@@ -9,11 +10,12 @@ class Contact_Book:
         self.name = name
         self.loc = self.read_data(FILE_PATH)
 
+
     def change_data(self ,data ,  filepath):
         with open(filepath , 'w') as f:
             json.dump(data , f , indent=4)
-            
-    
+
+
     def read_data(self , filepath):
         try:
             with open(filepath , 'r') as f:
@@ -21,7 +23,6 @@ class Contact_Book:
                 return data
         except:
             return {}
-            
 
 
     def _add_contact(self):
@@ -64,10 +65,54 @@ class Contact_Book:
 
 
     def _del_contact(self):
-        pass
+        if self.name not in self.loc:
+            print('\nYou dont have a any record in the contact book')
+            t.sleep(1)
+        else:
+            name = input('\nEnter the name of the contact: ')
+            no_repeat = 0
+            index = 0
+            for i in range(len(self.loc[self.name])):
+                if name != self.loc[self.name][i]['contact name']:
+                    no_repeat  = 1
+                else:
+                    no_repeat = 0
+                    index = i
+                    break
+            
+            if no_repeat == 1:
+                print('Invalid contact name')
+            else:
+                print('Deleting.....')
+                t.sleep(1)
+                del self.loc[self.name][index]
+                self.change_data(self.loc , FILE_PATH)
+                print('Contact has been succesfully deleted')
+
+
+        
 
     def _show_all_contacts(self):
-        pass
+        print('\nLoading....\n')
+        t.sleep(2)
+        if self.name not in self.loc:
+            print('\nYou donot have any record in our contact book')
+            t.sleep(1)
+        else:
+            headers = ['Contact name', 'Contact number']
+            data = []
+
+            for i in range(len(self.loc[self.name])):
+                contact_name = self.loc[self.name][i]['contact name']
+                contact_number = self.loc[self.name][i]['contact number']
+                stored_data = [contact_name , contact_number]
+                data.append(stored_data)
+
+            table = tabulate(data , headers=headers , tablefmt='grid')
+            print(table)
+            t.sleep(2)
+            
+        
 
     def _show_a_contact(self):
         repeat = 0
@@ -80,12 +125,15 @@ class Contact_Book:
                 
             if repeat == 0:
                 print('No such contact exist')
+                t.sleep(1)
             else:
                 contact_name = self.loc[self.name][i]['contact name']
                 contact_num = self.loc[self.name][i]['contact number']
                 print(f'Contact name : {contact_name}\nContact number : {contact_num}')
+                t.sleep(2)
         else:
             print('\nYou have no valid record in data')
+            t.sleep(1)
 
 
     
@@ -116,9 +164,6 @@ class Contact_Book:
     def screen(self):
         self.ask_for_opt()
 
-    
-    
-
 
 def main():
     name = input('\nEnter you name: ')
@@ -128,6 +173,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-    
-
-        
